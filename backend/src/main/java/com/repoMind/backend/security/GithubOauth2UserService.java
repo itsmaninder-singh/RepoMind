@@ -5,6 +5,7 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import com.repoMind.backend.entity.User;
 import com.repoMind.backend.services.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,9 @@ public class GithubOauth2UserService implements OAuth2UserService<Oauth2UserRequ
         ? String. join (",", userRequest.getAccessToken().getScopes())
         : "read:user, repo";
         
+
+        User user = userService.upsertFromGitHub(githubUser.getAttributes() , accessToken, scopes);
+        return new AppUserPrinicipal(user, githubUser.getAttributes()); 
     }
     
 }

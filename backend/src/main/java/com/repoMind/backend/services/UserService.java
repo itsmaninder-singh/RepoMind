@@ -1,5 +1,6 @@
 package com.repoMind.backend.services;
 
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.security.crypto.encrypt.TextEncryptor;
@@ -16,10 +17,36 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
     public final UserRepo userRepo;
     public final TextEncryptor textEncryptor;
-    
+    @Transactional
+public User upsertFromGitHub(
+        Map<String, Object> attributes,
+        String accessToken,
+        String scopes
+) {
+    Long githubId = toLong(attributes.get("id"));
 
+    String login = String.valueOf(attributes.get("login"));
+    String name = attributes.get("name") != null
+            ? String.valueOf(attributes.get("name"))
+            : login;
+    String avatarUrl = attributes.get("avatar_url") != null
+            ? String.valueOf(attributes.get("avatar_url"))
+            : null;
 
+    String encryptedToken = tokenEncryptor.encrypt(accessToken);
 
+    User user = userRepo.findByGithubId(githubId)
+            .orElseGet(User::new);
+
+    user.setGithubId(githubId);
+    user.setGithubUsername(login);
+    user.setDisplayName(name);
+    user.setAvatarUrl(avatarUrl);
+    user.setAccessToken(encryptedToken);
+    user.setTokenScopes(scopes);
+    return userRepo.save(user);
+
+}
     @Transactional(readOnly=true)
     public User requiredById(UUID id){
         return userRepo.findById(id).orElseThrow(()-> new IllegalArgumentException("user not found")); 
@@ -34,6 +61,7 @@ public class UserService {
         }
         return Long.parseLong(String.valueOf(value));
     }
+
 
     
 }
