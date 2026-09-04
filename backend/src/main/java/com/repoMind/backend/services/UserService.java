@@ -7,6 +7,7 @@ import org.springframework.security.crypto.encrypt.TextEncryptor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
 import com.repoMind.backend.entity.User;
 import com.repoMind.backend.repo.UserRepo;
 
@@ -16,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserService {
     public final UserRepo userRepo;
-    public final TextEncryptor textEncryptor;
+    private final TextEncryptor tokenEncryptor;
     @Transactional
 public User upsertFromGitHub(
         Map<String, Object> attributes,
@@ -33,7 +34,7 @@ public User upsertFromGitHub(
             ? String.valueOf(attributes.get("avatar_url"))
             : null;
 
-    String encryptedToken = tokenEncryptor.encrypt(accessToken);
+   String encryptedToken = tokenEncryptor.encrypt(accessToken);
 
     User user = userRepo.findByGithubId(githubId)
             .orElseGet(User::new);
@@ -53,7 +54,7 @@ public User upsertFromGitHub(
         
     }
     public String decryptAccessToken(User user){
-        return textEncryptor.decrypt(user.getAccessToken());
+        return tokenEncryptor.decrypt(user.getAccessToken());
     }
     private static Long toLong(Object value){
         if(value instanceof Number number){
