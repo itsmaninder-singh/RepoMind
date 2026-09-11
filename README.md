@@ -170,22 +170,20 @@ and protects routes using middleware.
 ### Frontend
 
 - React
-- Next.js
 - Tailwind CSS
 - Framer Motion
 - TypeScript
 
 ### Backend
 
-- Node.js
-- Express.js
+- springboot
 - LangChain
 - OpenAI API
 - GitHub API
 
 ### Database
 
-- MongoDB
+- postgresql
 - Pinecone / ChromaDB
 
 ### AI
