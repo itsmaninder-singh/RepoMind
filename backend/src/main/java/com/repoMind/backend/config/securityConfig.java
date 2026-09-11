@@ -78,7 +78,6 @@ public class securityConfig {
 
         return http.build();
     }
-
     @Bean
     AuthenticationSuccessHandler oauth2SuccessHandler(
             @Value("${app.frontend.url}") String frontendUrl) {
@@ -88,7 +87,6 @@ public class securityConfig {
         handler.setDefaultTargetUrl(frontendUrl + "/auth/callback");
         return handler;
     }
-
     @Bean
     AuthenticationFailureHandler oauth2FailureHandler(
             @Value("${app.frontend.url}") String frontendUrl) {
